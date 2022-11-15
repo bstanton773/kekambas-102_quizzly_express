@@ -6,6 +6,7 @@ MainAuthRouter.route('/register')
 
 MainAuthRouter.route('/login')
     .get(require('./login.view'))
+    .post(require('./login'))
 
 MainAuthRouter.route('/logout')
     .get(require('./logout'))
