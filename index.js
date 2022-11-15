@@ -5,9 +5,17 @@ const app = express();
 const port = process.env.PORT;
 const path = require('path');
 const { connectDB } = require('./src/db');
+const { graphqlHTTP } = require('express-graphql');
+const schema = require('./src/graphql/schema')
 
 // Execute the connectDB function to connect to our database
 connectDB();
+
+// Add graphql middleware to app
+app.use('/graphql', graphqlHTTP({
+    schema,
+    graphiql: true
+}))
 
 app.set('view engine', 'ejs')
 // Update the location of the folder for the res.render to use
