@@ -1,5 +1,6 @@
 const { GraphQLString } = require('graphql');
 const { User } = require('../models');
+const { createJwtToken } = require('../util/auth');
 
 
 const register = {
@@ -22,7 +23,8 @@ const register = {
 
         await user.save();
 
-        return user.username;
+        const token = createJwtToken(user)
+        return token;
     }
 }
 
