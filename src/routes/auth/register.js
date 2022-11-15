@@ -1,8 +1,12 @@
+const { User } = require('../../models');
+
 module.exports = (req, res) => {
-    console.log(req.body);
     if (req.body.password !== req.body.confirmPass){
         res.send({error: "Your passwords do not match"})
         return
     }
-    res.send('Post Main Auth Router')
+    const { username, email, password } = req.body
+    const user = new User({ username, email, password });
+    user.save();
+    res.send(`New User Created - ${user.username}`);
 }
