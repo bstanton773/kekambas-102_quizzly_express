@@ -30,6 +30,8 @@ module.exports = async (req, res) => {
         const jwtToken = data.data.register
         console.log(jwtToken);
 
+        res.cookie('jwtToken', jwtToken, { maxAge: 900000, httpOnly: true })
+
         res.redirect('/')
     } catch(err){
         console.error(err);

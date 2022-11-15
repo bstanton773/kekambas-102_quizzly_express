@@ -6,10 +6,16 @@ const port = process.env.PORT;
 const path = require('path');
 const { connectDB } = require('./src/db');
 const { graphqlHTTP } = require('express-graphql');
-const schema = require('./src/graphql/schema')
+const schema = require('./src/graphql/schema');
+const cookieParser = require('cookie-parser');
+const { authenticate } = require('./src/middleware/auth')
 
 // Execute the connectDB function to connect to our database
 connectDB();
+
+app.use(cookieParser());
+
+app.use(authenticate);
 
 // Add graphql middleware to app
 app.use('/graphql', graphqlHTTP({
