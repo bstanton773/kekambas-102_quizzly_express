@@ -31,7 +31,7 @@ app.set('views', path.join(__dirname, 'src/templates/views'))
 app.use(express.urlencoded({ extended: true }))
 
 app.get('/', (req, res) => {
-    res.send('Hello World')
+    res.render('dashboard')
 })
 
 // Import function to initialize routes
