@@ -1,7 +1,7 @@
 // Import built-in graphql type
-const { GraphQLObjectType, GraphQLInputObjectType, GraphQLID, GraphQLString, GraphQLInt } = require('graphql');
+const { GraphQLObjectType, GraphQLInputObjectType, GraphQLID, GraphQLString, GraphQLInt, GraphQLList } = require('graphql');
 // Import User, Quiz model to query
-const { User, Quiz } = require('../models')
+const { User, Quiz, Question } = require('../models')
 
 
 const UserType = new GraphQLObjectType(
@@ -11,7 +11,13 @@ const UserType = new GraphQLObjectType(
         fields: () => ({
             id: { type: GraphQLID },
             username: { type: GraphQLString },
-            email: { type: GraphQLString }
+            email: { type: GraphQLString },
+            quizzes: {
+                type: GraphQLList(QuizType),
+                resolve(parent, args){
+                    return Quiz.find({ userId: parent.id })
+                }
+            }
         })
     }
 )
@@ -33,6 +39,12 @@ const QuizType = new GraphQLObjectType(
                 resolve(parent, args){
                     return User.findById(parent.userId)
                 }
+            },
+            questions: {
+                type: GraphQLList(QuestionType),
+                resolve(parent, args){
+                    return Question.find({ quizId: parent.id })
+                }
             }
         })
     }
@@ -45,8 +57,8 @@ const QuestionType = new GraphQLObjectType(
         description: 'Question Type',
         fields: () => ({
             id: { type: GraphQLID },
-            title: { type: GraphQLSting },
-            correctAnswer: { type: GraphQLSting },
+            title: { type: GraphQLString },
+            correctAnswer: { type: GraphQLString },
             quizId: { type: GraphQLID },
             order: { type: GraphQLInt },
             quiz: {
