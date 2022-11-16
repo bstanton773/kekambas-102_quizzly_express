@@ -8,14 +8,22 @@ const { connectDB } = require('./src/db');
 const { graphqlHTTP } = require('express-graphql');
 const schema = require('./src/graphql/schema');
 const cookieParser = require('cookie-parser');
-const { authenticate } = require('./src/middleware/auth')
+const { authenticate } = require('./src/middleware/auth');
+const { userData } = require('./src/middleware/userData');
 
 // Execute the connectDB function to connect to our database
 connectDB();
 
+// Add cookie-parser middleware to add cookie headers to req.cookie
 app.use(cookieParser());
 
+// Add authentication middleware that will check for jwt token and either redirect
+// to login or add req.verifiedUser
 app.use(authenticate);
+
+// Add userData middleware to add quizzes onto the req.verifiedUser (if there is one)
+// *Must be AFTER authenticate middleware
+app.use(userData);
 
 // Add graphql middleware to app
 app.use('/graphql', graphqlHTTP({
