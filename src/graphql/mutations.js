@@ -1,5 +1,6 @@
-const { GraphQLString } = require('graphql');
-const { User } = require('../models');
+const { GraphQLString, GraphQLID, GraphQLNonNull, GraphQLList } = require('graphql');
+const { User, Quiz, Question } = require('../models');
+const { QuestionInputType } = require('./types')
 const { createJwtToken } = require('../util/auth');
 const bcrypt = require('bcrypt');
 
@@ -51,7 +52,69 @@ const login = {
     }
 }
 
+
+const createQuiz = {
+    type: GraphQLString,
+    args: {
+        title: {
+            type: GraphQLString
+        },
+        description: {
+            type: GraphQLString
+        },
+        userId: {
+            type: GraphQLID
+        },
+        questions: {
+            type: new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(QuestionInputType)))
+        }
+    },
+    async resolve(parent, args){
+        // Generate a slug for our quiz
+        let slugify = args.title.toLowerCase().replace(/[^\w ]+/g, '').replace(/ +/g, '-')
+        /*
+        Add a random integer to the end of the slug, check that the slug does not already exist
+        if it does, generate a new slug number
+        */
+        let fullSlug;
+        while(true){
+            let slugId = Math.floor(Math.random() * 10000);
+            fullSlug = `${slugify}-${slugId}`;
+
+            const existingQuiz = await Quiz.findOne({ slug: fullSlug })
+            if (!existingQuiz){
+                break;
+            }
+        }
+
+        const quiz = new Quiz({
+            title: args.title,
+            slug: fullSlug,
+            description: args.description,
+            userId: args.userId
+        })
+
+        await quiz.save()
+
+        // Loop through all of the QuestionInputs and create a new Question instance with the quiz id
+        for (let question of args.questions){
+            const newQuestion = new Question({
+                title: question.title,
+                correctAnswer: question.correctAnswer,
+                order: Number(question.order),
+                quizId: quiz.id
+            })
+            await newQuestion.save()
+        }
+
+        // Return the slug
+        return quiz.slug
+    }
+}
+
+
 module.exports = {
     register,
-    login
+    login,
+    createQuiz
 }
