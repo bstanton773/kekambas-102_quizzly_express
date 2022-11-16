@@ -1,3 +1,4 @@
+
 // Import built-in graphql type
 const { GraphQLObjectType, GraphQLInputObjectType, GraphQLID, GraphQLString, GraphQLInt, GraphQLList } = require('graphql');
 // Import User, Quiz model to query
@@ -91,3 +92,4 @@ module.exports = {
     QuestionType,
     QuestionInputType
 }
+

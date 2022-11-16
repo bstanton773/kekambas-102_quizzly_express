@@ -1,3 +1,4 @@
+
 // Import Types from GraphQL
 const { GraphQLList, GraphQLID, GraphQLString } = require('graphql');
 // Import our own created type
@@ -43,3 +44,4 @@ module.exports = {
     user,
     quizBySlug
 }
+
