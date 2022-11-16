@@ -38,10 +38,6 @@ app.set('views', path.join(__dirname, 'src/templates/views'))
 // Set up middleware to parse form data and add to request body
 app.use(express.urlencoded({ extended: true }))
 
-app.get('/', (req, res) => {
-    res.render('dashboard')
-})
-
 // Import function to initialize routes
 const initRoutes = require('./src/routes');
 // Call the initRoutes function with the app
