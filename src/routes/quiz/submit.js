@@ -42,7 +42,7 @@ module.exports = async (req, res) => {
 
         let submissionId = data.data.submitQuiz;
 
-        res.redirect('/')
+        res.redirect(`/quiz/results/${submissionId}`)
     } catch(err) {
         console.log(err)
     }
