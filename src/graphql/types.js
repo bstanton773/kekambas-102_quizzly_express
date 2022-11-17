@@ -97,10 +97,37 @@ const AnswerInputType = new GraphQLInputObjectType(
 )
 
 
+const SubmissionType = new GraphQLObjectType(
+    {
+        name: 'Submission',
+        description: 'Submission Type',
+        fields: () => ({
+            id: { type: GraphQLID },
+            quizId: { type: GraphQLID },
+            userId: { type: GraphQLID },
+            score: { type: GraphQLInt },
+            user: {
+                type: UserType,
+                resolve(parent, args){
+                    return User.findById(parent.userId)
+                }
+            },
+            quiz: {
+                type: QuizType,
+                resolve(parent, args){
+                    return Quiz.findById(parent.quizId)
+                }
+            }
+        })
+    }
+)
+
+
 module.exports = {
     UserType,
     QuizType,
     QuestionType,
     QuestionInputType,
-    AnswerInputType
+    AnswerInputType,
+    SubmissionType,
 }
