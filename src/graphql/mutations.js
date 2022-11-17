@@ -1,6 +1,6 @@
 const { GraphQLString, GraphQLID, GraphQLNonNull, GraphQLList } = require('graphql');
-const { User, Quiz, Question } = require('../models');
-const { QuestionInputType } = require('./types')
+const { User, Quiz, Question, Submission } = require('../models');
+const { QuestionInputType, AnswerInputType } = require('./types');
 const { createJwtToken } = require('../util/auth');
 const bcrypt = require('bcrypt');
 
@@ -113,8 +113,48 @@ const createQuiz = {
 }
 
 
+const submitQuiz = {
+    type: GraphQLID,
+    description: "Submit a quiz",
+    args: {
+        userId: { type: GraphQLID },
+        quizId: { type: GraphQLID },
+        answers: { type: new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(AnswerInputType)))}
+    },
+    async resolve(parent, args){
+        try{
+            let correct = 0;
+            let totalScore = args.answers.length;
+
+            for (const answer of args.answers){
+                const question = await Question.findById(answer.questionId);
+                if ( answer.answer.trim().toLowerCase() === question.correctAnswer.trim().toLowerCase() ){
+                    correct++
+                }
+            }
+
+            const score = ( correct / totalScore ) * 100;
+
+            const submission = new Submission({
+                userId: args.userId,
+                quizId: args.quizId,
+                score
+            })
+
+            await submission.save()
+
+            return submission.id
+
+        } catch(err){
+            console.log(err)
+        }
+    }
+}
+
+
 module.exports = {
     register,
     login,
-    createQuiz
+    createQuiz,
+    submitQuiz
 }

@@ -85,9 +85,22 @@ const QuestionInputType = new GraphQLInputObjectType(
 )
 
 
+const AnswerInputType = new GraphQLInputObjectType(
+    {
+        name: 'AnswerInput',
+        description: 'Answer Input Type',
+        fields: () => ({
+            questionId: { type: GraphQLID },
+            answer: { type: GraphQLString }
+        })
+    }
+)
+
+
 module.exports = {
     UserType,
     QuizType,
     QuestionType,
-    QuestionInputType
+    QuestionInputType,
+    AnswerInputType
 }
